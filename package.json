@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "heroku-postbuild": "npm install"
+    "heroku-postbuild": "npm install",
+    "postinstall": "puppeteer install"
   },
   "keywords": [],
   "author": "",
