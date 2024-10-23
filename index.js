@@ -1,29 +1,29 @@
-    const puppeteer = require('puppeteer');
-    const cron = require('node-cron');
-    require('dotenv').config();
+const puppeteer = require('puppeteer');
+const cron = require('node-cron');
+require('dotenv').config();
 
-    const userId = process.env.USER_ID;
-    const password = process.env.PASSWORD;
+const userId = process.env.USER_ID;
+const password = process.env.PASSWORD;
 
-    // ログイン関数
-    async function login(page) {
+// ログイン関数
+async function login(page) {
     await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/login');
     await page.type('#user_id', userId);
     await page.type('#password', password);
     await page.click('button');
     await page.waitForNavigation();
     console.log('ログイン完了');
-    }
+}
 
-    // 出勤/退勤を実行する関数
-    async function clock(page, action) {
+// 出勤/退勤を実行する関数
+async function clock(page, action) {
     await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/top');
     await page.click(action);  // actionには、出勤ボタンまたは退勤ボタンのセレクタを入れる
     console.log(`${action} 完了`);
-    }
+}
 
-    // 自動打刻を行う関数
-    async function performClock(action) {
+// 自動打刻を行う関数
+async function performClock(action) {
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
 
@@ -38,28 +38,24 @@
     await login(page); // ログインを実行
     await clock(page, action); // 出勤または退勤を実行
     await browser.close();
+}
+
+// 1時間ごとに実行
+cron.schedule('0 * * * *', async () => {
+    const currentHour = new Date().getHours(); // 現在の時刻を取得
+    if (currentHour === 9) {
+        console.log('9時出勤');
+        await performClock('.v-btn.v-btn--contained.theme--light.v-size--large.primary'); // 出勤ボタンのセレクタを指定
+    } else if (currentHour === 12) {
+        console.log('12時退勤');
+        await performClock('.v-btn.v-btn--contained.theme--light.v-size--large'); // 退勤ボタンのセレクタを指定
+    } else if (currentHour === 13) {
+        console.log('13時再出勤');
+        await performClock('.v-btn.v-btn--contained.theme--light.v-size--large.primary'); // 出勤ボタンのセレクタを指定
+    } else if (currentHour === 18) {
+        console.log('18時退勤');
+        await performClock('.v-btn.v-btn--contained.theme--light.v-size--large'); // 退勤ボタンのセレクタを指定
+    } else {
+        console.log('時間外です。'); // 時間外の場合のメッセージ
     }
-
-    // 9時出勤
-    cron.schedule('0 9 * * *', () => {
-    console.log('9時出勤');
-    performClock('.v-btn.v-btn--contained.theme--light.v-size--large.primary'); // 出勤ボタンのセレクタを指定
-    });
-
-    // 12時退勤
-    cron.schedule('0 12 * * *', () => {
-    console.log('12時退勤');
-    performClock('.v-btn.v-btn--contained.theme--light.v-size--large'); // 退勤ボタンのセレクタを指定
-    });
-
-    // 13時再出勤
-    cron.schedule('0 13 * * *', () => {
-    console.log('13時出勤');
-    performClock('.v-btn.v-btn--contained.theme--light.v-size--large.primary'); // 出勤ボタンのセレクタを指定
-    });
-
-    // 18時退勤
-    cron.schedule('0 18 * * *', () => {
-    console.log('18時退勤');
-    performClock('.v-btn.v-btn--contained.theme--light.v-size--large'); // 退勤ボタンのセレクタを指定
-    });
+});
