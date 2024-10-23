@@ -17,5 +17,5 @@
   "engines": {
     "node": "18.x"
   },
-  "heroku-postbuild": "npm install" 
+  "heroku-postbuild": "npm install"
 }

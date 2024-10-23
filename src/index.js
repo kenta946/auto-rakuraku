@@ -2,6 +2,8 @@ const puppeteer = require('puppeteer');
 const cron = require('node-cron');
 require('dotenv').config();
 
+console.log('アプリケーションが起動しました');
+
 const userId = process.env.USER_ID;
 const password = process.env.PASSWORD;
 
