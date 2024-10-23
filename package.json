@@ -12,10 +12,10 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "node-cron": "^3.0.3",
-    "puppeteer": "^21.11.0"
+    "puppeteer": "^23.6.0"
   },
   "engines": {
     "node": "18.x"
   },
-  "heroku-postbuild": "npm install"
+  "heroku-postbuild": "npm install" 
 }
