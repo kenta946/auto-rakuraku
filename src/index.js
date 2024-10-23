@@ -7,21 +7,46 @@ const userId = process.env.USER_ID;
 const password = process.env.PASSWORD;
 
 // ログイン処理
+// async function login(page) {    
+//     try {
+//         console.log('ログイン処理を開始します'); 
+//         await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/login');
+//         await page.type('#input-42', userId);
+//         await page.type('#input-50', password);
+//         await page.click('button.v-btn.v-btn--contained.primary');
+//         await page.waitForNavigation({ timeout: 5000 });
+//         console.log('ログイン完了');
+//         return true; // ログイン成功
+//     } catch (error) {
+//         console.error('ログインエラー:', error);
+//         return false; // ログイン失敗
+//     }
+// }
+
+
 async function login(page) {    
     try {
         console.log('ログイン処理を開始します'); 
-        await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/login');
+        await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/login', { waitUntil: 'networkidle0' });
+
+        await page.waitForSelector('#input-42', { timeout: 5000 });
         await page.type('#input-42', userId);
+
+        await page.waitForSelector('#input-50', { timeout: 5000 });
         await page.type('#input-50', password);
+
+        console.log('ログインボタンをクリックします。');
         await page.click('button.v-btn.v-btn--contained.primary');
         await page.waitForNavigation({ timeout: 5000 });
         console.log('ログイン完了');
         return true; // ログイン成功
     } catch (error) {
-        console.error('ログインエラー:', error);
+        console.error('ログインエラー:', error.message);
+        console.log('現在のページのHTML:', await page.content());
         return false; // ログイン失敗
     }
 }
+
 
 // 位置情報偽装
 async function setGeolocation(page) {
