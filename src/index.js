@@ -9,6 +9,7 @@ const password = process.env.PASSWORD;
 
 async function login(page) {
     try {
+        console.log('ログイン処理を開始します'); 
         await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/login');
         await page.type('#user_id', userId);
         await page.type('#password', password);
@@ -32,7 +33,10 @@ async function clock(page, action) {
 
 // 自動打刻を行う関数
 async function performClock(action) {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'] // 追加
+    });
     const page = await browser.newPage();
 
     // 位置情報を偽装
@@ -50,6 +54,7 @@ async function performClock(action) {
 
 // 1時間ごとに実行
 cron.schedule('0 * * * *', async () => {
+    console.log('cronジョブが実行されました'); // 追加
     const currentHour = new Date().getHours(); // 現在の時刻を取得
     if (currentHour === 9) {
         console.log('9時出勤');
