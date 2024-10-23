@@ -5,12 +5,27 @@ require('dotenv').config();
 const userId = process.env.USER_ID;
 const password = process.env.PASSWORD;
 
+console.log('USER_ID:', userId);
+console.log('PASSWORD:', password);
+
+// ブラウザテスト
+(async () => {
+    console.log('Puppeteerのテスト起動を開始します');
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    console.log('ブラウザが起動しました');
+    await browser.close();
+    console.log('ブラウザが正常に終了しました');
+})();
+
 async function login(page) {
     try {
         console.log('ログイン処理を開始します'); 
         await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/login');
-        await page.type('#user_id', userId);
-        await page.type('#password', password);
+        await page.type('input[name="loginId"]', userId);
+        await page.type('input[name="password"]', password);
         await page.click('button');
         await page.waitForNavigation();
         console.log('ログイン完了');
