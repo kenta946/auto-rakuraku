@@ -5,6 +5,7 @@ dotenv.config(); // dotenvをここで初期化
 const userId = process.env.USER_ID;
 const password = process.env.PASSWORD;
 
+// ログイン処理
 async function login(page) {    
     try {
         console.log('ログイン処理を開始します'); 
@@ -20,7 +21,7 @@ async function login(page) {
         return false; // ログイン失敗
     }
 }
-
+// 位置情報偽装
 async function setGeolocation(page) {
     try {
         const context = page.browser().defaultBrowserContext();
