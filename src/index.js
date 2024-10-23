@@ -2,8 +2,6 @@ const puppeteer = require('puppeteer');
 const cron = require('node-cron');
 require('dotenv').config();
 
-console.log('アプリケーションが起動しました');
-
 const userId = process.env.USER_ID;
 const password = process.env.PASSWORD;
 
@@ -21,36 +19,34 @@ async function login(page) {
     }
 }
 
-async function clock(page, action) {
-    try {
-        await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/top');
-        await page.click(action);
-        console.log(`${action} 完了`);
-    } catch (error) {
-        console.error(`${action} エラー:`, error);
-    }
-}
-
-// 自動打刻を行う関数
 async function performClock(action) {
+    console.log('ブラウザ起動中...');
     const browser = await puppeteer.launch({
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] // 追加
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
     });
     const page = await browser.newPage();
+    console.log('新しいページを開きました。');
 
     // 位置情報を偽装
-    const context = browser.defaultBrowserContext();
-    await context.overridePermissions('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/top', ['geolocation']);
-    await page.setGeolocation({
-        latitude: 34.67536300091403,  // キャリスタ緯度
-        longitude: 135.49971632649746, // キャリスタの経度
-    });
+    try {
+        const context = browser.defaultBrowserContext();
+        await context.overridePermissions('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/top', ['geolocation']);
+        await page.setGeolocation({
+            latitude: 34.67536300091403,  // キャリスタ緯度
+            longitude: 135.49971632649746, // キャリスタの経度
+        });
+        console.log('位置情報を設定しました。');
+    } catch (error) {
+        console.error('位置情報設定エラー:', error);
+    }
 
     await login(page); // ログインを実行
     await clock(page, action); // 出勤または退勤を実行
     await browser.close();
+    console.log('ブラウザを閉じました。');
 }
+
 
 // 1時間ごとに実行
 cron.schedule('0 * * * *', async () => {
