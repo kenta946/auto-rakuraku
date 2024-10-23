@@ -5,26 +5,32 @@ require('dotenv').config();
 const userId = process.env.USER_ID;
 const password = process.env.PASSWORD;
 
-// ログイン関数
 async function login(page) {
-    await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/login');
-    await page.type('#user_id', userId);
-    await page.type('#password', password);
-    await page.click('button');
-    await page.waitForNavigation();
-    console.log('ログイン完了');
+    try {
+        await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/login');
+        await page.type('#user_id', userId);
+        await page.type('#password', password);
+        await page.click('button');
+        await page.waitForNavigation();
+        console.log('ログイン完了');
+    } catch (error) {
+        console.error('ログインエラー:', error);
+    }
 }
 
-// 出勤/退勤を実行する関数
 async function clock(page, action) {
-    await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/top');
-    await page.click(action);  // actionには、出勤ボタンまたは退勤ボタンのセレクタを入れる
-    console.log(`${action} 完了`);
+    try {
+        await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/top');
+        await page.click(action);
+        console.log(`${action} 完了`);
+    } catch (error) {
+        console.error(`${action} エラー:`, error);
+    }
 }
 
 // 自動打刻を行う関数
 async function performClock(action) {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
 
     // 位置情報を偽装
