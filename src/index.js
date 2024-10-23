@@ -11,8 +11,8 @@ async function login(page) {
     try {
         console.log('ログイン処理を開始します'); 
         await page.goto('https://rklacrosse.rakurakukintai.jp/NMy5Xnk8USa/login');
-        await page.type('input[name="loginId"]', userId);
-        await page.type('input[name="password"]', password);
+        await page.type('#input-42', userId);
+        await page.type('#input-50', password);
         await page.click('button.v-btn.v-btn--contained.primary');
         await page.waitForNavigation({ timeout: 5000 });
         console.log('ログイン完了');
